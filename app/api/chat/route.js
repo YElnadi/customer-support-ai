@@ -12,7 +12,7 @@ export async function POST(req) {
   // create a chat completeion request to the openAI API
   const completion = await openai.chat.completions.create({
     messages: [{ role: "system", content: systemPrompt }, ...data],
-    model: "gpt-4o-mini", // specify the model to use
+    model: 'gpt-4o-mini', // specify the model to use
     stream: true, // enable streaming responses in real time
   });
 

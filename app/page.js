@@ -11,8 +11,11 @@ export default function Home() {
     },
   ]);
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
 
   const sendMessage = async () => {
+    if(!message.trim() || isLoading) return;
+    setIsLoading(true)
     setMessage(""); //Clear the input field
     setMessages((messages) => [
       ...messages,
@@ -20,7 +23,7 @@ export default function Home() {
       { role: "assistant", content: "" }, // add a placeholder for the assistant's response
     ]);
     //send the message to the server
-    const response = fetch("/api/chat", {
+    const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +53,14 @@ export default function Home() {
         return reader.read().then(processText); //containue reading the next chunk of the response
       });
     });
+    setIsLoading(false)
   };
+  const handleKeyPress = (event) =>{
+    if(event.key === 'Enter' && !event.shiftKey){
+      event.preventDefault()
+      sendMessage()
+    }
+  }
   return (
     <>
       <Box
@@ -107,9 +117,11 @@ export default function Home() {
               fullWidth
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              onKeyDown = {handleKeyPress}
+              disabled = {isLoading}
             />
-            <Button variant="contained" onClick={sendMessage}>
-              Send{" "}
+            <Button variant="contained" onClick={sendMessage} disabled={isLoading}>
+              {isLoading ? 'Sending...' : 'Send'}
             </Button>
           </Stack>
         </Stack>
