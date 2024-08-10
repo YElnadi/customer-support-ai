@@ -12,8 +12,44 @@ export default function Home() {
   ]);
   const [message, setMessage] = useState("");
 
-  
+
   const sendMessage = async () =>{
+    setMessage('') //Clear the input field
+    setMessages((messages) =>[
+      ...messages,
+      {role:'user', content:message}, //Add user's message to the chat
+      {role:'assistant', content:''}, // add a placeholder for the assistant's response
+    ])
+    //send the message to the server
+    const response = fetch('/api/chat', {
+      method:'POST',
+      headers: {
+        'Content-Type':'application/json',
+
+      },
+      body:JSON.stringify([...messages, {role:'user', content:message}])
+    }).then (async(res)=>{
+      const reader = res.body.getReader() //get a reader to read the response body
+      const decoder = new TextDecoder() //create a decoder to decode the response text
+
+      let result = ''
+      //function to process the text from the response 
+      return reader.read().then(function processText({done, value}){
+        if (done){
+          return result
+        }
+        const text = decoder .decode(value || new Uint8Array(), {stream: true}) // decode the text
+        setMessages((messages)=>{
+          let lastMessage = messages[messages.length -1 ] // get the last message (assistant's placeholder)
+          let otherMessages = messages.slice(0, messages.length -1 ) //get all other messages
+          return[
+            ...otherMessages,
+            {...lastMessage, content:lastMessage.content + text}, // append the decoded text's to the assistant's message 
+          ]
+        })
+        return reader.read().then(processText)  //containue reading the next chunk of the response 
+      })
+    })
 
   }
   return (
