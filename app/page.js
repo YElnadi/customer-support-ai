@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { Box, Button, Stack, TextField } from "@mui/material";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -33,7 +33,6 @@ export default function Home() {
       const reader = res.body.getReader(); //get a reader to read the response body
       const decoder = new TextDecoder(); //create a decoder to decode the response text
 
-     
       let result = "";
       //function to process the text from the response
       return reader.read().then(function processText({ done, value }) {
@@ -44,11 +43,11 @@ export default function Home() {
           stream: true,
         }); // decode the text
 
-         // Format the assistant's response
-      const formattedText = text
-      .replace(/(\d+\.\s\*\*)|(\*\*)/g, "<b>")
-      .replace(/\*\*/g, "</b>");
-    const listFormattedText = formattedText.replace(/\d+\.\s/g, "<br/>$&");
+        // Format the assistant's response
+        const formattedText = text
+          .replace(/(\d+\.\s\*\*)|(\*\*)/g, "<b>")
+          .replace(/\*\*/g, "</b>");
+        const listFormattedText = formattedText.replace(/\d+\.\s/g, "<br/>$&");
 
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1]; // get the last message (assistant's placeholder)
@@ -85,12 +84,36 @@ export default function Home() {
       <Box
         width="100vw"
         height="100vh"
-        color="pink"
+        bgcolor="white"
         display="flex"
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
+        // sx={{
+        //   position: "relative",
+        //   width: "100vw",
+        //   height: "100vh",
+        //   backgroundImage: "url(/bg5.jpeg)",
+        //   backgroundSize: "cover",
+        //   backgroundPosition: "center",
+        //   backgroundRepeat: "no-repeat", 
+        //   color: "white", // Ensures text is readable on the background
+        //   display: "flex",
+        //   flexDirection: "column",
+        //   justifyContent: "center",
+        //   alignItems: "center",
+        // }}
       >
+        <Box
+        p={2}
+        >
+                 <Typography
+                 variant="h4"
+                 style={{ fontFamily: 'Playfair Display, sans-serif' }}
+
+                 >Welcome to Headstarter AI Chat Bot</Typography> 
+
+        </Box>
         <Stack
           direction={"column"}
           width="500px"
@@ -98,6 +121,13 @@ export default function Home() {
           border="1px solid black"
           p={2}
           spacing={3}
+          borderRadius={10}
+          bgcolor="white"
+          sx={{
+            backgroundImage: "url(/bg6.jpeg)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
         >
           <Stack
             direction={"column"}
@@ -123,7 +153,7 @@ export default function Home() {
                   }
                   color="white"
                   borderRadius={16}
-                  p={3}
+                  p={2}
                   sx={{ whiteSpace: "pre-wrap" }} // To preserve line breaks
                 >
                   {message.role === "assistant" ? (
