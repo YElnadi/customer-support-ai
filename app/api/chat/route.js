@@ -10,7 +10,7 @@ export async function POST(req) {
   const openai = new OpenAI(); // new instance of the OpenAI client
   const data = await req.json(); // pares the json body of the incoming request
   // create a chat completeion request to the openAI API
-  const completion = await openai.chat.completion.create({
+  const completion = await openai.chat.completions.create({
     messages: [{ role: "system", content: systemPrompt }, ...data],
     model: "gpt-4o-mini", // specify the model to use
     stream: true, // enable streaming responses in real time
