@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 
 export default function Home() {
@@ -11,11 +11,11 @@ export default function Home() {
     },
   ]);
   const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async () => {
-    if(!message.trim() || isLoading) return;
-    setIsLoading(true)
+    if (!message.trim() || isLoading) return;
+    setIsLoading(true);
     setMessage(""); //Clear the input field
     setMessages((messages) => [
       ...messages,
@@ -33,6 +33,7 @@ export default function Home() {
       const reader = res.body.getReader(); //get a reader to read the response body
       const decoder = new TextDecoder(); //create a decoder to decode the response text
 
+     
       let result = "";
       //function to process the text from the response
       return reader.read().then(function processText({ done, value }) {
@@ -42,6 +43,13 @@ export default function Home() {
         const text = decoder.decode(value || new Int8Array(), {
           stream: true,
         }); // decode the text
+
+         // Format the assistant's response
+      const formattedText = text
+      .replace(/(\d+\.\s\*\*)|(\*\*)/g, "<b>")
+      .replace(/\*\*/g, "</b>");
+    const listFormattedText = formattedText.replace(/\d+\.\s/g, "<br/>$&");
+
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1]; // get the last message (assistant's placeholder)
           let otherMessages = messages.slice(0, messages.length - 1); //get all other messages
@@ -53,14 +61,25 @@ export default function Home() {
         return reader.read().then(processText); //containue reading the next chunk of the response
       });
     });
-    setIsLoading(false)
+    setIsLoading(false);
   };
-  const handleKeyPress = (event) =>{
-    if(event.key === 'Enter' && !event.shiftKey){
-      event.preventDefault()
-      sendMessage()
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
     }
-  }
+  };
+
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <>
       <Box
@@ -105,11 +124,19 @@ export default function Home() {
                   color="white"
                   borderRadius={16}
                   p={3}
+                  sx={{ whiteSpace: "pre-wrap" }} // To preserve line breaks
                 >
-                  {message.content}
+                  {message.role === "assistant" ? (
+                    <span
+                      dangerouslySetInnerHTML={{ __html: message.content }}
+                    />
+                  ) : (
+                    message.content
+                  )}
                 </Box>
               </Box>
             ))}
+            <div ref={messagesEndRef} />
           </Stack>
           <Stack direction={"row"} spacing={2}>
             <TextField
@@ -117,11 +144,15 @@ export default function Home() {
               fullWidth
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              onKeyDown = {handleKeyPress}
-              disabled = {isLoading}
+              onKeyDown={handleKeyPress}
+              disabled={isLoading}
             />
-            <Button variant="contained" onClick={sendMessage} disabled={isLoading}>
-              {isLoading ? 'Sending...' : 'Send'}
+            <Button
+              variant="contained"
+              onClick={sendMessage}
+              disabled={isLoading}
+            >
+              {isLoading ? "Sending..." : "Send"}
             </Button>
           </Stack>
         </Stack>
