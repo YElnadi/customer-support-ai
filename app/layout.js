@@ -5,7 +5,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Customer Support AI",
-  description: "AI customer support chatbot for Headstarter, built with Next.js and the OpenAI API with streaming responses.",
+  description: "AI customer support chatbot for Headstarter, built with Next.js and the Google Gemini API with streaming responses.",
 };
 
 export default function RootLayout({ children }) {
