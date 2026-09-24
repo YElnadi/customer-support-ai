@@ -5,7 +5,9 @@ An AI customer-support chatbot for Headstarter (a platform for AI-driven softwar
 Users chat with an assistant that answers questions about scheduling interviews, preparing for assessments, understanding AI feedback and fixing common technical issues. Replies **stream in word by word** as the model writes them, and the assistant sees the **whole conversation**, so follow-up questions work naturally.
 
 <!-- Add a screenshot: save one as public/screenshot.png and uncomment the next line -->
-![Chat screenshot](public/3Tips.png) (public/Ajoke.png)
+![Chat answering interview-prep questions](public/3Tips.png)
+
+![Chat staying on topic when asked to ignore its instructions](public/Ajoke.png)
 
 ## Tech stack
 
